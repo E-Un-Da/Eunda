@@ -79,7 +79,6 @@ public class StudyService {
         return "모집상태가 변경되었습니다.";
     }
 
-
     // 스터디 수정
     @Transactional
     public String updateStudy(Long id, StudyRequestDto requestDto, HttpServletRequest req) {
