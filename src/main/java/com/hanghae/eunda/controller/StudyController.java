@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,8 +31,8 @@ import org.springframework.web.bind.annotation.RestController;
 
     private final StudyService studyService;
 
-    @PostMapping("/")
-    public ResponseEntity<String> createStudy(StudyRequestDto requestDto, HttpServletRequest req) {
+    @PostMapping("")
+    public ResponseEntity<String> createStudy(@RequestBody StudyRequestDto requestDto, HttpServletRequest req) {
         String successMessage = studyService.createStudy(requestDto, req);
 
         return ResponseEntity.status(HttpStatus.CREATED)
@@ -41,7 +42,7 @@ import org.springframework.web.bind.annotation.RestController;
     }
 
 
-    @GetMapping("/")
+    @GetMapping("")
     public Page<StudyResponseDto> getStudies(@ModelAttribute StudyQueryDto query) {
         return studyService.getStudies(query.getPage() - 1, query.getSortBy(), query.isAsc());
     }
@@ -49,7 +50,7 @@ import org.springframework.web.bind.annotation.RestController;
     @GetMapping("/{id}")
     public StudyWithCardsDto getStudy(@PathVariable Long id) { return studyService.getStudy(id); }
 
-    @PostMapping("/{id}/status")
+    @PutMapping("/{id}/status")
     public ResponseEntity<String> changeStatus(@PathVariable Long id) {
         String successMessage = studyService.changeStatus(id);
 

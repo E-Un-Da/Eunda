@@ -30,14 +30,13 @@ public class AuthFilter implements Filter {
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String url = httpServletRequest.getRequestURI();
+        String method = httpServletRequest.getMethod();
+        System.out.println(method);
 
-        if (StringUtils.hasText(url) && (url.startsWith("/signup") || url.startsWith("/signin")) || url.startsWith("/")
-
-        ) {
-            // 회원가입, 로그인 관련 API 는 인증 필요없이 요청 진행
+        if (StringUtils.hasText(url) && (url.startsWith("/signup") || url.startsWith("/signin") || ("GET".equals(method) && url.startsWith("/studies")))) {
+            // 회원가입, 로그인, 스터디 조회 관련 API 는 인증 필요없이 요청 진행
             chain.doFilter(request, response); // 다음 Filter 로 이동
         } else {
-
             String tokenValue = tokenManager.getTokenFromRequest(httpServletRequest);
 
             if (StringUtils.hasText(tokenValue)) { // 토큰이 존재하면 검증 시작

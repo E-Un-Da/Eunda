@@ -29,7 +29,6 @@ public class Study {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Email
     @Column(nullable = false)
     private String title;
 
@@ -66,7 +65,7 @@ public class Study {
         this.rule = requestDto.getRule();
         this.recruitNum = requestDto.getRecruitNum();
         this.recruit = requestDto.isRecruit();
-        this.leader = member.getNickname();
+        this.leader = member.getEmail();
     }
 
     public void changeStatus() {

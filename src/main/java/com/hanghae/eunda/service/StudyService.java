@@ -30,6 +30,7 @@ public class StudyService {
     private final StudyMemberRepository studyMemberRepository;
     private final CardRepository cardRepository;
 
+    @Transactional
     public String createStudy(StudyRequestDto requestDto, HttpServletRequest req) {
         Member member = (Member) req.getAttribute("member");
 
