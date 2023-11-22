@@ -43,6 +43,9 @@ public class Study {
     private String rule;
 
     @Column(nullable = false)
+    private int headcount = 1;
+
+    @Column(nullable = false)
     private int recruitNum;
 
     @Column(nullable = false)
