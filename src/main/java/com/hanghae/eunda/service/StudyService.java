@@ -29,7 +29,9 @@ public class StudyService {
     private final StudyMemberRepository studyMemberRepository;
     private final CardRepository cardRepository;
 
+
     // 스터디 생성
+    @Transactional
     public String createStudy(StudyRequestDto requestDto, HttpServletRequest req) {
         Member member = (Member) req.getAttribute("member");
 
@@ -79,7 +81,6 @@ public class StudyService {
         return "모집상태가 변경되었습니다.";
     }
 
-
     // 스터디 수정
     @Transactional
     public String updateStudy(Long id, StudyRequestDto requestDto, HttpServletRequest req) {
@@ -91,10 +92,12 @@ public class StudyService {
     }
 
     // 스터디 삭제
+    @Transactional
     public String deleteStudy(Long id, HttpServletRequest req) {
         Study study = findStudy(id);
         checkLeader(req, study);
-        studyRepository.delete(study);
+//        studyRepository.delete(study);
+        studyMemberRepository.removeAllByStudyId(study.getId());
 
         return "스터디가 삭제되었습니다.";
     }

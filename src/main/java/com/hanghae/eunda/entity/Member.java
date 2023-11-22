@@ -1,5 +1,6 @@
 package com.hanghae.eunda.entity;
 
+import com.hanghae.eunda.dto.member.SignupRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,4 +32,12 @@ public class Member {
     @Column(nullable = false)
     private String password;
 
+    @Column(name = "email_authentication")
+    private Boolean emailAuth = false;
+
+    public Member(SignupRequestDto requestDto) {
+        this.email = requestDto.getEmail();
+        this.nickname = requestDto.getNickname();
+        this.password = requestDto.getPassword();
+    }
 }
