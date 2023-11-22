@@ -3,6 +3,8 @@ package com.hanghae.eunda.controller;
 import com.hanghae.eunda.dto.study.StudyQueryDto;
 import com.hanghae.eunda.dto.study.StudyRequestDto;
 import com.hanghae.eunda.dto.study.StudyResponseDto;
+import com.hanghae.eunda.dto.study.StudyWithCardsDto;
+import com.hanghae.eunda.entity.Study;
 import com.hanghae.eunda.service.StudyService;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
@@ -15,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -44,9 +47,7 @@ import org.springframework.web.bind.annotation.RestController;
     }
 
     @GetMapping("/{id}")
-    public String getStudy() {
-        return null;
-    }
+    public StudyWithCardsDto getStudy(@PathVariable Long id) { return studyService.getStudy(id); }
 
     @PostMapping("/{id}/status")
     public String changeStatus() {
