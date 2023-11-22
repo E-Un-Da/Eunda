@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -60,8 +61,13 @@ import org.springframework.web.bind.annotation.RestController;
     }
 
     @PutMapping("/{id}")
-    public String updateStudy() {
-        return null;
+    public ResponseEntity<String> updateStudy(@PathVariable Long id, @RequestBody StudyRequestDto requestDto) {
+        String successMessage = studyService.updateStudy(id, requestDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(
+                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
     }
 
     @DeleteMapping("/{id}")

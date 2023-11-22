@@ -57,9 +57,7 @@ public class StudyService {
         return studyList.map(StudyResponseDto::new);
     }
     public StudyWithCardsDto getStudy(Long id) {
-        Study study = studyRepository.findById(id).orElseThrow(() ->
-            new IllegalArgumentException("스터디가 존재하지 않습니다.")
-        );
+        Study study = findStudy(id);
 
         List<Card> cards = cardRepository.findAllByStudyId(id);
 
@@ -68,11 +66,23 @@ public class StudyService {
 
     @Transactional
     public String changeStatus(Long id) {
-        Study study = studyRepository.findById(id).orElseThrow(() ->
-            new IllegalArgumentException("존재하지 않는 스터디입니다.")
-            );
+        Study study = findStudy(id);
         study.changeStatus();
 
         return "모집상태가 변경되었습니다.";
+    }
+
+    @Transactional
+    public String updateStudy(Long id, StudyRequestDto requestDto) {
+        Study study = findStudy(id);
+        study.updateStudy(requestDto);
+
+        return "스터디 정보가 수정되었습니다.";
+    }
+
+    private Study findStudy(Long id) {
+        return studyRepository.findById(id).orElseThrow(() ->
+            new IllegalArgumentException("존재하지 않는 스터디입니다.")
+        );
     }
 }
