@@ -52,8 +52,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<String> changeStatus(@PathVariable Long id) {
-        String successMessage = studyService.changeStatus(id);
+    public ResponseEntity<String> changeStatus(@PathVariable Long id, HttpServletRequest req) {
+        String successMessage = studyService.changeStatus(id, req);
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .header(

@@ -92,10 +92,12 @@ public class StudyService {
     }
 
     // 스터디 삭제
+    @Transactional
     public String deleteStudy(Long id, HttpServletRequest req) {
         Study study = findStudy(id);
         checkLeader(req, study);
-        studyRepository.delete(study);
+//        studyRepository.delete(study);
+        studyMemberRepository.removeAllByStudyId(study.getId());
 
         return "스터디가 삭제되었습니다.";
     }
