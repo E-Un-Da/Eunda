@@ -1,0 +1,10 @@
+aws:
+  secretsmanager:
+    name: eunda
+cloud:
+  aws:
+    region:
+      static: ap-northeast-2
+
+
+
