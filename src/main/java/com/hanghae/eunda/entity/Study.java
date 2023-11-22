@@ -49,6 +49,9 @@ public class Study {
     private boolean recruit;
 
     @Column(nullable = false)
+    private String leader;
+
+    @Column(nullable = false)
     @CreatedDate
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
@@ -60,5 +63,6 @@ public class Study {
         this.rule = requestDto.getRule();
         this.recruitNum = requestDto.getRecruitNum();
         this.recruit = requestDto.isRecruit();
+        this.leader = member.getNickname();
     }
 }
