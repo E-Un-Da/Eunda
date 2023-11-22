@@ -1,7 +1,9 @@
 package com.hanghae.eunda.controller;
 
+import com.hanghae.eunda.dto.SigninRequestDto;
 import com.hanghae.eunda.dto.member.SignupRequestDto;
 import com.hanghae.eunda.service.MemberService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -41,8 +43,8 @@ public class MemberController {
     }
 
     @PostMapping("/signin")
-    public ResponseEntity<String> signin() {
-        return null;
+    public ResponseEntity<String> signin(@RequestBody SigninRequestDto requestDto, HttpServletResponse res) {
+        return memberService.signin(requestDto, res);
     }
 
 }
