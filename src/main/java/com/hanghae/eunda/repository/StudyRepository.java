@@ -1,7 +1,8 @@
 package com.hanghae.eunda.repository;
 
 import com.hanghae.eunda.entity.Card;
+import com.hanghae.eunda.entity.Study;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface StudyRepository extends JpaRepository<Card, Long> {
+public interface StudyRepository extends JpaRepository<Study, Long> {
 }
