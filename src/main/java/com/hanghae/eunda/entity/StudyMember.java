@@ -28,4 +28,9 @@ public class StudyMember {
     @ManyToOne
     @JoinColumn(name = "study_id")
     private Study study;
+
+    public StudyMember(Member member, Study study) {
+        this.member = member;
+        this.study = study;
+    }
 }
