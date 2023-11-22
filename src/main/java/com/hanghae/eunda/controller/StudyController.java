@@ -50,8 +50,13 @@ import org.springframework.web.bind.annotation.RestController;
     public StudyWithCardsDto getStudy(@PathVariable Long id) { return studyService.getStudy(id); }
 
     @PostMapping("/{id}/status")
-    public String changeStatus() {
-        return null;
+    public ResponseEntity<String> changeStatus(@PathVariable Long id) {
+        String successMessage = studyService.changeStatus(id);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(
+                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
     }
 
     @PutMapping("/{id}")
