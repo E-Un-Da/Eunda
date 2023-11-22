@@ -71,4 +71,13 @@ public class Study {
     public void changeStatus() {
         this.recruit = !(this.recruit);
     }
+
+    public void updateStudy(StudyRequestDto requestDto) {
+        this.title = requestDto.getTitle();
+        this.category = requestDto.getCategory();
+        this.intro = requestDto.getIntro();
+        this.rule = requestDto.getRule();
+        this.recruitNum = requestDto.getRecruitNum();
+        this.recruit = requestDto.isRecruit();
+    }
 }

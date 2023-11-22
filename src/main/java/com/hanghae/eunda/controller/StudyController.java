@@ -50,6 +50,7 @@ import org.springframework.web.bind.annotation.RestController;
     @GetMapping("/{id}")
     public StudyWithCardsDto getStudy(@PathVariable Long id) { return studyService.getStudy(id); }
 
+
     @PutMapping("/{id}/status")
     public ResponseEntity<String> changeStatus(@PathVariable Long id) {
         String successMessage = studyService.changeStatus(id);
@@ -61,13 +62,23 @@ import org.springframework.web.bind.annotation.RestController;
     }
 
     @PutMapping("/{id}")
-    public String updateStudy() {
-        return null;
+    public ResponseEntity<String> updateStudy(@PathVariable Long id, @RequestBody StudyRequestDto requestDto, HttpServletRequest req) {
+        String successMessage = studyService.updateStudy(id, requestDto, req);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(
+                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
     }
 
     @DeleteMapping("/{id}")
-    public String deleteStudy() {
-        return null;
+    public ResponseEntity<String> deleteStudy(@PathVariable Long id, HttpServletRequest req) {
+        String successMessage = studyService.deleteStudy(id, req);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(
+                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
     }
 
     @PostMapping("/invites")
