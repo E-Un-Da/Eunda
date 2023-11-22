@@ -1,5 +1,8 @@
 package com.hanghae.eunda.controller;
 
+import com.hanghae.eunda.dto.study.StudyRequestDto;
+import com.hanghae.eunda.service.StudyService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,38 +16,41 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/studies")
 @RequiredArgsConstructor
     public class StudyController {
+
+    private final StudyService studyService;
+
     @PostMapping("/")
-    public ResponseEntity<String> createStudy() {
-       return null;
+    public String createStudy(StudyRequestDto requestDto, HttpServletRequest req) {
+       return studyService.createStudy(requestDto, req);
     }
 
     @PostMapping("/invites")
-    public ResponseEntity<String> inviteMember() {
+    public String inviteMember() {
         return null;
     }
 
     @GetMapping("/")
-    public ResponseEntity<String> getStudies() {
+    public String getStudies() {
         return null;
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<String> getStudy() {
+    public String getStudy() {
         return null;
     }
 
     @PostMapping("/{id}/status")
-    public ResponseEntity<String> changeStatus() {
+    public String changeStatus() {
         return null;
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateStudy() {
+    public String updateStudy() {
         return null;
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteStudy() {
+    public String deleteStudy() {
         return null;
     }
 

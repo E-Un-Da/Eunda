@@ -1,12 +1,12 @@
 package com.hanghae.eunda.entity;
 
+import com.hanghae.eunda.dto.study.StudyRequestDto;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Email;
@@ -53,4 +53,12 @@ public class Study {
     @Temporal(TemporalType.TIMESTAMP)
     private LocalDateTime createdAt;
 
+    public Study(StudyRequestDto requestDto, Member member) {
+        this.title = requestDto.getTitle();
+        this.category = requestDto.getCategory();
+        this.intro = requestDto.getIntro();
+        this.rule = requestDto.getRule();
+        this.recruitNum = requestDto.getRecruitNum();
+        this.recruit = requestDto.isRecruit();
+    }
 }
