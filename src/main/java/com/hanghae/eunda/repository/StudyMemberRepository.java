@@ -1,6 +1,5 @@
 package com.hanghae.eunda.repository;
 
-import com.hanghae.eunda.entity.Card;
 import com.hanghae.eunda.entity.StudyMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -43,10 +43,16 @@ public class Study {
     private String rule;
 
     @Column(nullable = false)
+    private int headcount = 1;
+
+    @Column(nullable = false)
     private int recruitNum;
 
     @Column(nullable = false)
     private boolean recruit;
+
+    @Column(nullable = false)
+    private String leader;
 
     @Column(nullable = false)
     @CreatedDate
@@ -60,5 +66,10 @@ public class Study {
         this.rule = requestDto.getRule();
         this.recruitNum = requestDto.getRecruitNum();
         this.recruit = requestDto.isRecruit();
+        this.leader = member.getNickname();
+    }
+
+    public void changeStatus() {
+        this.recruit = !(this.recruit);
     }
 }
