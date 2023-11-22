@@ -13,7 +13,6 @@ import com.hanghae.eunda.repository.StudyRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -30,6 +29,7 @@ public class StudyService {
     private final StudyMemberRepository studyMemberRepository;
     private final CardRepository cardRepository;
 
+    // 스터디 생성
     public String createStudy(StudyRequestDto requestDto, HttpServletRequest req) {
         Member member = (Member) req.getAttribute("member");
 
@@ -47,6 +47,8 @@ public class StudyService {
         return "새로운 스터디를 생성하였습니다.";
     }
 
+
+    // 스터디 목록 조회
     public Page<StudyResponseDto> getStudies(int page, String sortBy, boolean isAsc) {
         Sort.Direction direction = isAsc ? Sort.Direction.ASC : Sort.Direction.DESC;
         Sort sort = Sort.by(direction, sortBy);
@@ -56,6 +58,8 @@ public class StudyService {
 
         return studyList.map(StudyResponseDto::new);
     }
+
+    // 스터디 상세 조회
     public StudyWithCardsDto getStudy(Long id) {
         Study study = findStudy(id);
 
@@ -64,25 +68,50 @@ public class StudyService {
         return new StudyWithCardsDto(study, cards);
     }
 
-    @Transactional
-    public String changeStatus(Long id) {
-        Study study = findStudy(id);
-        study.changeStatus();
 
+    // 스터디 모집상태 변경
+    @Transactional
+    public String changeStatus(Long id, HttpServletRequest req) {
+        Study study = findStudy(id);
+        checkLeader(req, study);
+
+        study.changeStatus();
         return "모집상태가 변경되었습니다.";
     }
 
+
+    // 스터디 수정
     @Transactional
-    public String updateStudy(Long id, StudyRequestDto requestDto) {
+    public String updateStudy(Long id, StudyRequestDto requestDto, HttpServletRequest req) {
         Study study = findStudy(id);
+        checkLeader(req, study);
         study.updateStudy(requestDto);
 
         return "스터디 정보가 수정되었습니다.";
     }
 
+    // 스터디 삭제
+    public String deleteStudy(Long id, HttpServletRequest req) {
+        Study study = findStudy(id);
+        checkLeader(req, study);
+        studyRepository.delete(study);
+
+        return "스터디가 삭제되었습니다.";
+    }
+
+    // DB에서 스터디 조회
     private Study findStudy(Long id) {
         return studyRepository.findById(id).orElseThrow(() ->
             new IllegalArgumentException("존재하지 않는 스터디입니다.")
         );
+    }
+
+    // 스터디장인지 체크
+    private void checkLeader(HttpServletRequest req, Study study) {
+        Member member = (Member) req.getAttribute("member");
+
+        if (!member.getNickname().equals(study.getLeader())) {
+            throw new IllegalArgumentException("스터디 장만 가능합니다.");
+        }
     }
 }
