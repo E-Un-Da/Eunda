@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -63,5 +64,15 @@ public class StudyService {
         List<Card> cards = cardRepository.findAllByStudyId(id);
 
         return new StudyWithCardsDto(study, cards);
+    }
+
+    @Transactional
+    public String changeStatus(Long id) {
+        Study study = studyRepository.findById(id).orElseThrow(() ->
+            new IllegalArgumentException("존재하지 않는 스터디입니다.")
+            );
+        study.changeStatus();
+
+        return "모집상태가 변경되었습니다.";
     }
 }

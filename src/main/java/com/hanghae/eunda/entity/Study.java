@@ -68,4 +68,8 @@ public class Study {
         this.recruit = requestDto.isRecruit();
         this.leader = member.getNickname();
     }
+
+    public void changeStatus() {
+        this.recruit = !(this.recruit);
+    }
 }
