@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 public class RecordController {
+
     @PostMapping("/cards/{id}/records")
     public ResponseEntity<String> createRecord() {
         return null;

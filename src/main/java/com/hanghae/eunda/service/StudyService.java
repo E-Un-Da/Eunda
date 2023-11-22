@@ -29,7 +29,9 @@ public class StudyService {
     private final StudyMemberRepository studyMemberRepository;
     private final CardRepository cardRepository;
 
+
     // 스터디 생성
+    @Transactional
     public String createStudy(StudyRequestDto requestDto, HttpServletRequest req) {
         Member member = (Member) req.getAttribute("member");
 
