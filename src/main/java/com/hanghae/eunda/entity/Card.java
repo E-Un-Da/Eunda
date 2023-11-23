@@ -28,7 +28,7 @@ public class Card {
     private String contents;
 
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "member_id", nullable = false)
 
     private Member member;
