@@ -7,6 +7,7 @@ import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import java.security.NoSuchAlgorithmException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
@@ -37,5 +38,14 @@ public class MailSendService {
         helper.setSubject(MAIL_TITLE_CERTIFICATION);
         helper.setText(content);
         mailSender.send(mimeMessage);
+    }
+
+    public void sendMailInvite(String recipientEmail, String content) throws MessagingException {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(recipientEmail);
+        message.setSubject("스터디에 초대합니다!");
+        message.setText(content);
+
+        mailSender.send(message);
     }
 }

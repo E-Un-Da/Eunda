@@ -1,11 +1,13 @@
 package com.hanghae.eunda.controller;
 
+import com.hanghae.eunda.dto.study.StudyInviteRequestDto;
 import com.hanghae.eunda.dto.study.StudyQueryDto;
 import com.hanghae.eunda.dto.study.StudyRequestDto;
 import com.hanghae.eunda.dto.study.StudyResponseDto;
 import com.hanghae.eunda.dto.study.StudyWithCardsDto;
-import com.hanghae.eunda.entity.Study;
+import com.hanghae.eunda.mail.ApiResponse;
 import com.hanghae.eunda.service.StudyService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
@@ -16,12 +18,14 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -81,11 +85,25 @@ import org.springframework.web.bind.annotation.RestController;
             .body(successMessage);
     }
 
-    @PostMapping("/invites")
-    public String inviteMember() {
-        return null;
+    @PostMapping("{id}/invites")
+    public ResponseEntity<String> inviteMember(@PathVariable Long id, HttpServletRequest req, @RequestBody StudyInviteRequestDto requestDto)
+        throws MessagingException {
+        String successMessage = studyService.inviteMember(id, req, requestDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(
+                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
     }
 
+    @GetMapping("{id}/join")
+    public ResponseEntity<String> joinStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req)
+    {
+        String successMessage = studyService.joinStudy(id, token, req);
 
-
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(
+                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
+    }
 }

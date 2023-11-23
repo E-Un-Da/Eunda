@@ -1,5 +1,6 @@
 package com.hanghae.eunda.service;
 
+import com.hanghae.eunda.dto.study.StudyInviteRequestDto;
 import com.hanghae.eunda.dto.study.StudyRequestDto;
 import com.hanghae.eunda.dto.study.StudyResponseDto;
 import com.hanghae.eunda.dto.study.StudyWithCardsDto;
@@ -7,11 +8,14 @@ import com.hanghae.eunda.entity.Card;
 import com.hanghae.eunda.entity.Member;
 import com.hanghae.eunda.entity.Study;
 import com.hanghae.eunda.entity.StudyMember;
+import com.hanghae.eunda.redis.RedisTokenService;
 import com.hanghae.eunda.repository.CardRepository;
 import com.hanghae.eunda.repository.StudyMemberRepository;
 import com.hanghae.eunda.repository.StudyRepository;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
+import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -28,6 +32,8 @@ public class StudyService {
     private final StudyRepository studyRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final CardRepository cardRepository;
+    private final MailSendService mailSendService;
+    private final RedisTokenService redisTokenService;
 
 
     // 스터디 생성
@@ -102,6 +108,57 @@ public class StudyService {
         return "스터디가 삭제되었습니다.";
     }
 
+
+    // 스터디 초대
+    public String inviteMember(Long id, HttpServletRequest req, StudyInviteRequestDto requestDto)
+        throws MessagingException {
+        Study study = findStudy(id);
+        checkLeader(req, study);
+
+        String joinToken = redisTokenService.generateAndSaveToken();
+        String joinLink = "http://localhost:8080/studies/" + id + "/join?token=" + joinToken;
+        String content = getEmailContent(study.getTitle(), joinLink);
+        String recipientEmail = requestDto.getEmail();
+
+        mailSendService.sendMailInvite(recipientEmail, content);
+
+        return "스터디멤버를 초대하였습니다.";
+    }
+
+
+    // 초대받은 스터디에 가입
+    @Transactional
+    public String joinStudy(Long id, String token, HttpServletRequest req) {
+        Study study = findStudy(id);
+
+        if (!redisTokenService.isTokenValid(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+
+        Member member = (Member) req.getAttribute("member");
+
+        if (member == null) {
+            throw new IllegalArgumentException("로그인한 회원만 접근할 수 있습니다..");
+        }
+
+        StudyMember studyMember = new StudyMember(member, study);
+        studyMemberRepository.save(studyMember);
+        study.addMember();
+
+        redisTokenService.deleteToken(token);
+
+        return "스터디에 성공적으로 참여했습니다.";
+    }
+
+
+    // 초대메일 내용 작성
+    private String getEmailContent(String title, String joinLink) {
+        String content = String.format("안녕하세요! '%s' 스터디에 초대합니다.\n", title);
+        content += "가입하려면 아래 링크를 클릭해주세요:\n";
+        content += joinLink;
+        return content;
+    }
+
     // DB에서 스터디 조회
     private Study findStudy(Long id) {
         return studyRepository.findById(id).orElseThrow(() ->
@@ -113,7 +170,7 @@ public class StudyService {
     private void checkLeader(HttpServletRequest req, Study study) {
         Member member = (Member) req.getAttribute("member");
 
-        if (!member.getNickname().equals(study.getLeader())) {
+        if (!member.getEmail().equals(study.getLeader())) {
             throw new IllegalArgumentException("스터디 장만 가능합니다.");
         }
     }
