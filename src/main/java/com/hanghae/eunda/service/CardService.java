@@ -2,9 +2,9 @@ package com.hanghae.eunda.service;
 
 import com.hanghae.eunda.dto.card.CardRequestDto;
 import com.hanghae.eunda.dto.card.CardResponseDto;
+import com.hanghae.eunda.dto.card.CardStatusRequestDto;
 import com.hanghae.eunda.entity.*;
 import com.hanghae.eunda.repository.CardRepository;
-import com.hanghae.eunda.repository.StudyMemberRepository;
 import com.hanghae.eunda.repository.StudyRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,6 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final StudyRepository studyRepository;
-    private final StudyMemberRepository studyMemberRepository;
 
     @Transactional
     public void createCard(Long studyId, CardRequestDto requestDto, HttpServletRequest req) {
@@ -52,7 +51,7 @@ public class CardService {
     }
 
     @Transactional
-    public String deleteCard(Long id, StudyMember studyMember, HttpServletRequest req) {
+    public String deleteCard(Long id, HttpServletRequest req) {
         Member member = (Member) req.getAttribute("member");
         Card card = findCard(id);
         if (!member.getId().equals(card.getMember().getId())) {
@@ -63,20 +62,16 @@ public class CardService {
     }
 
     @Transactional
-    public String changeCardStatus(Long id, StudyMember studyMember, HttpServletRequest req) {
+    public String changeCardStatus(Long id, CardStatusRequestDto cardStatusRequestDto, HttpServletRequest req) {
         Member member = (Member) req.getAttribute("member");
         Card card = findCard(id);
         if (!member.getId().equals(card.getMember().getId())) {
             throw new IllegalArgumentException("너 스터디 멤버 아니잖아");
         }
-        if (card.getStatus() == StatusEnumType.TODO) {
-            card.changeCardStatus(StatusEnumType.IN_PROGRESS);
-        } else if (card.getStatus() == StatusEnumType.IN_PROGRESS) {
-            card.changeCardStatus(StatusEnumType.DONE);
-        } else {
-            // DONE은 끝난건데 변경이 되나? -> 만약 된다면 다시 TODO로
-            card.changeCardStatus(StatusEnumType.TODO);
-        }
+        StatusEnumType newStatus = StatusEnumType.valueOf(cardStatusRequestDto.getStatus());
+        card.changeCardStatus(newStatus);
+
+
         return "상태 변경 완료";
     }
     private Card findCard(Long id) {

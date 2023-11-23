@@ -5,11 +5,11 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter
+@Setter
 public class CardRequestDto {
     private String title;
     private StatusEnumType status;
     private String contents;
     private Long studyId;
-
 
 }
