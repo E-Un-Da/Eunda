@@ -1,4 +1,4 @@
-package com.hanghae.eunda.dto;
+package com.hanghae.eunda.dto.member;
 
 import lombok.Getter;
 
