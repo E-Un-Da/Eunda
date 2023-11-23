@@ -80,4 +80,8 @@ public class Study {
         this.recruitNum = requestDto.getRecruitNum();
         this.recruit = requestDto.isRecruit();
     }
+
+    public void addMember() {
+        this.headcount++;
+    }
 }
