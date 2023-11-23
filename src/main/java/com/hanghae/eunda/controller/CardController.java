@@ -2,7 +2,7 @@ package com.hanghae.eunda.controller;
 
 import com.hanghae.eunda.dto.card.CardRequestDto;
 import com.hanghae.eunda.dto.card.CardResponseDto;
-import com.hanghae.eunda.entity.Member;
+import com.hanghae.eunda.dto.card.CardStatusRequestDto;
 import com.hanghae.eunda.entity.StudyMember;
 import com.hanghae.eunda.service.CardService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -34,12 +34,12 @@ public class CardController {
     }
 
     @DeleteMapping("/cards/{id}")
-    public String deleteCard(@PathVariable Long id, StudyMember studyMember, HttpServletRequest req) {
-        return cardService.deleteCard(id, studyMember, req);
+    public String deleteCard(@PathVariable Long id, HttpServletRequest req) {
+        return cardService.deleteCard(id, req);
     }
 
     @PutMapping("/cards/{id}/status")
-    public String changeCardStatus(@PathVariable Long id, StudyMember studyMember, HttpServletRequest req) {
-        return cardService.changeCardStatus(id, studyMember, req);
+    public String changeCardStatus(@PathVariable Long id, @RequestBody CardStatusRequestDto requestDto, HttpServletRequest req) {
+        return cardService.changeCardStatus(id, requestDto, req);
     }
 }

@@ -39,7 +39,7 @@ public class Card {
 
     public Card(CardRequestDto requestDto, Study study) {
         this.title = requestDto.getTitle();
-        this.status = StatusEnumType.TODO;
+        this.status = requestDto.getStatus();
         this.contents = requestDto.getContents();
         this.study = study;
     }
@@ -52,4 +52,8 @@ public class Card {
     public void changeCardStatus(StatusEnumType status) {
         this.status = status;
     }
+
+//    public void changeStatus(CardRequestDto requestDto) {
+//    }
+
 }
