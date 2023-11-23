@@ -1,0 +1,15 @@
+package com.hanghae.eunda.dto.card;
+
+import com.hanghae.eunda.entity.StatusEnumType;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+public class CardRequestDto {
+    private String title;
+    private StatusEnumType status;
+    private String contents;
+    private Long studyId;
+
+
+}
