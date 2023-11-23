@@ -35,7 +35,6 @@ public class StudyService {
     private final MailSendService mailSendService;
     private final RedisTokenService redisTokenService;
 
-
     // 스터디 생성
     @Transactional
     public String createStudy(StudyRequestDto requestDto, HttpServletRequest req) {
@@ -102,12 +101,10 @@ public class StudyService {
     public String deleteStudy(Long id, HttpServletRequest req) {
         Study study = findStudy(id);
         checkLeader(req, study);
-//        studyRepository.delete(study);
         studyMemberRepository.removeAllByStudyId(study.getId());
 
         return "스터디가 삭제되었습니다.";
     }
-
 
     // 스터디 초대
     public String inviteMember(Long id, HttpServletRequest req, StudyInviteRequestDto requestDto)
@@ -115,16 +112,15 @@ public class StudyService {
         Study study = findStudy(id);
         checkLeader(req, study);
 
-        String joinToken = redisTokenService.generateAndSaveToken();
-        String joinLink = "http://localhost:8080/studies/" + id + "/join?token=" + joinToken;
-        String content = getEmailContent(study.getTitle(), joinLink);
+        String joinToken = redisTokenService.generateAndSaveToken(); // UUID 토큰 생성
+        String joinLink = "http://localhost:8080/studies/" + id + "/join?token=" + joinToken; // 초대링크 생성
+        String content = getEmailContent(study.getTitle(), joinLink); // 초대메일 내용 생성
         String recipientEmail = requestDto.getEmail();
 
         mailSendService.sendMailInvite(recipientEmail, content);
 
         return "스터디멤버를 초대하였습니다.";
     }
-
 
     // 초대받은 스터디에 가입
     @Transactional
@@ -149,7 +145,6 @@ public class StudyService {
 
         return "스터디에 성공적으로 참여했습니다.";
     }
-
 
     // 초대메일 내용 작성
     private String getEmailContent(String title, String joinLink) {
