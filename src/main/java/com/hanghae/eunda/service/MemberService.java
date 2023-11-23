@@ -5,12 +5,14 @@ import com.hanghae.eunda.dto.member.SignupRequestDto;
 import com.hanghae.eunda.entity.Member;
 import com.hanghae.eunda.jwt.TokenGenerator;
 import com.hanghae.eunda.repository.MemberRepository;
+import jakarta.mail.internet.MimeMessage;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +25,7 @@ public class MemberService {
     private final MemberRepository memberRepository;
     private final PasswordEncoder passwordEncoder;
     private final TokenGenerator tokenGenerator;
+    private final JavaMailSender mailSender;
 
     public ResponseEntity signup(SignupRequestDto requestDto) {
         String email = requestDto.getEmail();
@@ -37,7 +40,10 @@ public class MemberService {
         Member member = new Member(requestDto);
         memberRepository.save(member);
 
-        return ResponseEntity.status(HttpStatus.OK).body("유저 가입이 완료되었습니다.");
+        // 이메일 인증 링크 전송
+//        sendEmail(email);
+
+        return ResponseEntity.status(HttpStatus.OK).body("유저 가입이 완료되었습니다. <br/> 이메일 인증을 진행해주세요.");
     }
 
     public ResponseEntity<String> signin(SigninRequestDto requestDto, HttpServletResponse res) {
@@ -61,4 +67,19 @@ public class MemberService {
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body("로그인에 성공하였습니다.");
     }
+
+//    private void sendEmail(String email) {
+//        String receiverMail = email;
+//        MimeMessage message = mailSender.createMimeMessage();
+//
+//        // token 생성 및 redis 저장
+//        String emailToken
+//
+//        String body = "<div>"
+//                + "<h1> 안녕하세요. eunda 입니다</h1>"
+//                + "<br>"
+//                + "<p>아래 링크를 클릭하면 이메일 인증이 완료됩니다.<p>"
+//                + "<a href='http://localhost:8080/auth/verify?token=" + emailToken + "'>인증 링크</a>"
+//                + "</div>";
+//    }
 }
