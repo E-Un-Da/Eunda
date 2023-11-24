@@ -6,12 +6,10 @@ import com.hanghae.eunda.dto.card.CardStatusRequestDto;
 import com.hanghae.eunda.entity.*;
 import com.hanghae.eunda.repository.CardRepository;
 import com.hanghae.eunda.repository.StudyRepository;
-import jakarta.persistence.EntityManager;
 import jakarta.persistence.LockModeType;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,7 +20,7 @@ public class CardService {
 
     private final CardRepository cardRepository;
     private final StudyRepository studyRepository;
-    private final EntityManager em;
+//    private final RedissonClient redissonClient;
 
     @Transactional
     public void createCard(Long studyId, CardRequestDto requestDto, HttpServletRequest req) {
@@ -69,16 +67,16 @@ public class CardService {
     public String changeCardStatus(Long id, CardStatusRequestDto cardStatusRequestDto, HttpServletRequest req) {
         Member member = (Member) req.getAttribute("member");
 
-        Card card = em.find(Card.class, id, LockModeType.PESSIMISTIC_WRITE);
-        if (card == null) {
-            throw new IllegalArgumentException("선택한 카드가 없습니다");
-        }
-
-        if (!member.getId().equals(card.getMember().getId())) {
-            throw new IllegalArgumentException("너 스터디 멤버 아니잖아");
-        }
-        StatusEnumType newStatus = StatusEnumType.valueOf(cardStatusRequestDto.getStatus());
-        card.changeCardStatus(newStatus);
+//        Card card = em.find(Card.class, id, LockModeType.PESSIMISTIC_WRITE);
+//        if (card == null) {
+//            throw new IllegalArgumentException("선택한 카드가 없습니다");
+//        }
+//
+//        if (!member.getId().equals(card.getMember().getId())) {
+//            throw new IllegalArgumentException("너 스터디 멤버 아니잖아");
+//        }
+//        StatusEnumType newStatus = StatusEnumType.valueOf(cardStatusRequestDto.getStatus());
+//        card.changeCardStatus(newStatus);
 
         return "상태 변경 완료";
     }

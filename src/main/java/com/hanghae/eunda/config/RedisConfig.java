@@ -1,6 +1,9 @@
 package com.hanghae.eunda.config;
 
 import lombok.extern.slf4j.Slf4j;
+import org.redisson.api.RedissonClient;
+import org.redisson.spring.data.connection.RedissonConnectionFactory;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,22 +15,16 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Slf4j
 public class RedisConfig {
 
-    @Value("${spring.data.redis.mail.host}")
-    private String host;
-    @Value("${spring.data.redis.mail.port}")
-    private int port;
+    private final RedisConnectionFactory redisConnectionFactory;
 
-    @Bean
-    public RedisConnectionFactory redisMailConnectionFactory() {
-        log.info(host);
-        log.info(String.valueOf(port));
-        return new LettuceConnectionFactory(host, port);
+    public RedisConfig(@Qualifier("redissonClient") RedissonClient redissonClient) {
+        this.redisConnectionFactory = new RedissonConnectionFactory(redissonClient);
     }
 
     @Bean(name = "redisTemplate")
     public StringRedisTemplate redisTemplate() {
         StringRedisTemplate stringRedisTemplate = new StringRedisTemplate();
-        stringRedisTemplate.setConnectionFactory(redisMailConnectionFactory());
+        stringRedisTemplate.setConnectionFactory(redisConnectionFactory);
         return stringRedisTemplate;
     }
 }
