@@ -68,23 +68,30 @@ public class CardService {
         return "카드 삭제 성공";
     }
 
+
     @Transactional
     public String changeCardStatus(Long id, CardStatusRequestDto cardStatusRequestDto, HttpServletRequest req) {
+        final RLock lock = redissonClient.getLock("cardLock_" + id);
+        final String worker = Thread.currentThread().getName();
+
         Member member = (Member) req.getAttribute("member");
-        Card card = findCard(id);
-        RLock lock = redissonClient.getLock("cardLock_" + id);
-        StudyMember studyMember = studyMemberRepository.findByMemberIdAndStudyId(member.getId(), card.getStudy().getId())
-            .orElseThrow(() -> new IllegalArgumentException("스터디멤버가 아닙니다."));
 
         try {
-            boolean available = lock.tryLock(10, 1, TimeUnit.SECONDS);
+            boolean available = lock.tryLock(10, 5, TimeUnit.SECONDS);
             if(available) {
+                Card card = findCard(id);
+                StudyMember studyMember = studyMemberRepository.findByMemberIdAndStudyId(member.getId(), card.getStudy().getId())
+                    .orElseThrow(() -> new IllegalArgumentException("스터디멤버가 아닙니다."));
+                log.info("현재 작업자: [{}]", worker);
+                log.info("현재 상태: [{}]", card.getStatus());
                 StatusEnumType currentState = card.getStatus();
                 StatusEnumType newState = StatusEnumType.valueOf(cardStatusRequestDto.getStatus());
                 if(currentState.equals(newState)) {
                     throw new IllegalArgumentException("카드의 상태를 변경하지 않았습니다.");
                 }
+
                 card.changeCardStatus(newState);
+
                 return "상태 변경 완료";
             } else {
                 throw new RuntimeException("락을 획득할 수 없습니다.");
