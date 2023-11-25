@@ -3,6 +3,7 @@ package com.hanghae.eunda.service;
 
 import com.hanghae.eunda.dto.card.CardRequestDto;
 import com.hanghae.eunda.dto.card.CardResponseDto;
+import com.hanghae.eunda.dto.card.CardStatusRequestDto;
 import com.hanghae.eunda.entity.Card;
 import com.hanghae.eunda.entity.Member;
 import com.hanghae.eunda.entity.Study;
@@ -10,16 +11,26 @@ import com.hanghae.eunda.repository.CardRepository;
 import com.hanghae.eunda.repository.MemberRepository;
 import com.hanghae.eunda.repository.StudyRepository;
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
-import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.redisson.api.RedissonClient;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.Optional;
+import org.springframework.mock.web.MockHttpServletRequest;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
