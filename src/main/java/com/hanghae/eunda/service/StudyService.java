@@ -1,9 +1,6 @@
 package com.hanghae.eunda.service;
 
-import com.hanghae.eunda.dto.study.StudyInviteRequestDto;
-import com.hanghae.eunda.dto.study.StudyRequestDto;
-import com.hanghae.eunda.dto.study.StudyResponseDto;
-import com.hanghae.eunda.dto.study.StudyWithCardsDto;
+import com.hanghae.eunda.dto.study.*;
 import com.hanghae.eunda.entity.Card;
 import com.hanghae.eunda.entity.Member;
 import com.hanghae.eunda.entity.Study;
@@ -15,7 +12,7 @@ import com.hanghae.eunda.repository.StudyRepository;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.List;
-import java.util.UUID;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -145,6 +142,21 @@ public class StudyService {
 
         return "스터디에 성공적으로 참여했습니다.";
     }
+
+    // 로그인 한 유저의 스터디 목록
+    public List<StudyMemberResponseDto> myStudies(HttpServletRequest req) {
+        Member member = (Member) req.getAttribute("member");
+
+        if (member == null) {
+            throw new IllegalArgumentException("로그인한 회원만 접근할 수 있습니다..");
+        }
+
+        // 유저의 스터디 목록 조회
+        List<StudyMember> studyMemberList = studyMemberRepository.findByMemberId(member.getId());
+
+        return studyMemberList.stream().map(StudyMemberResponseDto::new).toList();
+    }
+
 
     // 초대메일 내용 작성
     private String getEmailContent(String title, String joinLink) {

@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 
 @RestController
@@ -92,5 +93,10 @@ import java.nio.charset.StandardCharsets;
             .header(
                 HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
             .body(successMessage);
+    }
+
+    @GetMapping("my-studies")
+    public List<StudyMemberResponseDto> myStudies(HttpServletRequest req) {
+        return studyService.myStudies(req);
     }
 }
