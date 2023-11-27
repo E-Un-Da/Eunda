@@ -4,6 +4,10 @@ import com.hanghae.eunda.dto.member.EmailCertificationDto;
 import com.hanghae.eunda.dto.member.SigninRequestDto;
 import com.hanghae.eunda.dto.member.SignupRequestDto;
 import com.hanghae.eunda.entity.Member;
+import com.hanghae.eunda.exception.EmailDuplicateException;
+import com.hanghae.eunda.exception.ForbiddenException;
+import com.hanghae.eunda.exception.NotFoundException;
+import com.hanghae.eunda.exception.PasswordUnmatched;
 import com.hanghae.eunda.jwt.TokenGenerator;
 import com.hanghae.eunda.mail.CertificationGenerator;
 import com.hanghae.eunda.redis.CertificationNumberDao;
@@ -47,7 +51,7 @@ public class MemberService {
 
         // 이메일 중복 확인
         memberRepository.findByEmail(email)
-                .ifPresent(existedEmail -> {throw new IllegalArgumentException("이메일 중복입니다.");});
+                .ifPresent(existedEmail -> {throw new EmailDuplicateException("이메일 중복입니다.");});
 
         // 비밀번호 암호화
         requestDto.setPassword(password);
@@ -72,7 +76,7 @@ public class MemberService {
 
         // DB 이메일 확인
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("이메일이 존재하지 않습니다."));
+                .orElseThrow(() -> new NotFoundException("이메일이 존재하지 않습니다."));
 
         // 유저 인증 확인
         if(!member.getEmailAuth()) {
@@ -83,13 +87,13 @@ public class MemberService {
             } catch (MessagingException e) {
                 throw new RuntimeException(e);
             } finally {
-                throw new IllegalArgumentException("유저 인증을 진행하지 않았습니다.");
+                throw new ForbiddenException("유저 인증을 진행하지 않았습니다.");
             }
         }
 
         // DB 비밀번호 확인
         if(!passwordEncoder.matches(password, member.getPassword())) {
-            throw new IllegalArgumentException("비밀번호가 일치하지 않습니다.");
+            throw new PasswordUnmatched("비밀번호가 일치하지 않습니다.");
         }
 
         // token 생성
@@ -105,12 +109,12 @@ public class MemberService {
     public void verifyMemberEmail(String email, String certificationNumber) {
 
         if(!isVerify(email, certificationNumber)) {
-            throw new IllegalArgumentException("제공된 이메일 값과 암호값이 다릅니다.");
+            throw new ForbiddenException("제공된 이메일 값과 암호값이 다릅니다.");
         }
 
         // 유저 찾기
         Member member = memberRepository.findByEmail(email).orElseThrow(() -> {
-            throw new IllegalArgumentException("이메일이 존재하지 않습니다.");
+            throw new NotFoundException("이메일이 존재하지 않습니다.");
         });
 
         // 유저 가입 완료
@@ -124,7 +128,7 @@ public class MemberService {
         // redis에 저장된 (키:이메일)밸류 값과 전달된 number가 같은지 검사
         boolean validatedEmail = isEmailExists(email);
         if (!isEmailExists(email)) {
-            throw new IllegalArgumentException("이메일이 존재 하지않습니다.");
+            throw new NotFoundException("이메일이 존재 하지않습니다.");
         }
         return (validatedEmail &&
                 certificationNumberDao.getCertificationNumber(email)

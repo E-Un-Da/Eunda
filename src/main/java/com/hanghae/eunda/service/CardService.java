@@ -4,6 +4,8 @@ import com.hanghae.eunda.dto.card.CardRequestDto;
 import com.hanghae.eunda.dto.card.CardResponseDto;
 import com.hanghae.eunda.dto.card.CardStatusRequestDto;
 import com.hanghae.eunda.entity.*;
+import com.hanghae.eunda.exception.ForbiddenException;
+import com.hanghae.eunda.exception.NotFoundException;
 import com.hanghae.eunda.repository.CardRepository;
 import com.hanghae.eunda.repository.StudyMemberRepository;
 import com.hanghae.eunda.repository.StudyRepository;
@@ -32,10 +34,10 @@ public class CardService {
         Member member = (Member) req.getAttribute("member");
 
         if (member == null) {
-            throw new IllegalArgumentException("로그인한 회원만 접근할 수 있습니다..");
+            throw new ForbiddenException("로그인한 회원만 접근할 수 있습니다..");
         }
         Study study = studyRepository.findById(studyId)
-                .orElseThrow(() -> new RuntimeException("해당 스터디가 존재하지 않습니다"));
+                .orElseThrow(() -> new NotFoundException("해당 스터디가 존재하지 않습니다"));
         Card card = new Card(requestDto, study);
         card.setMember(member);
         cardRepository.save(card);
@@ -51,7 +53,7 @@ public class CardService {
         Member member = (Member) req.getAttribute("member");
         Card card = findCard(id);
         if (!member.getId().equals(card.getMember().getId())) {
-            throw new IllegalArgumentException("너 스터디 멤버 아니잖아");
+            throw new ForbiddenException("스터디 멤버만 수정할 수 있습니다.");
         }
         card.update(requestDto);
         return "카드 수정 성공";
@@ -62,7 +64,7 @@ public class CardService {
         Member member = (Member) req.getAttribute("member");
         Card card = findCard(id);
         if (!member.getId().equals(card.getMember().getId())) {
-            throw new IllegalArgumentException("너 스터디 멤버 아니잖아");
+            throw new ForbiddenException("스터디 멤버만 수정할 수 있습니다.");
         }
         cardRepository.delete(card);
         return "카드 삭제 성공";
@@ -81,13 +83,13 @@ public class CardService {
             if(available) {
                 Card card = findCard(id);
                 StudyMember studyMember = studyMemberRepository.findByMemberIdAndStudyId(member.getId(), card.getStudy().getId())
-                    .orElseThrow(() -> new IllegalArgumentException("스터디멤버가 아닙니다."));
+                    .orElseThrow(() -> new ForbiddenException("스터디 멤버만 수정할 수 있습니다."));
                 log.info("현재 작업자: [{}]", worker);
                 log.info("현재 상태: [{}]", card.getStatus());
                 StatusEnumType currentState = card.getStatus();
                 StatusEnumType newState = StatusEnumType.valueOf(cardStatusRequestDto.getStatus());
                 if(currentState.equals(newState)) {
-                    throw new IllegalArgumentException("카드의 상태를 변경하지 않았습니다.");
+                    throw new ForbiddenException("스터디 멤버만 수정할 수 있습니다.");
                 }
 
                 card.changeCardStatus(newState);
@@ -104,6 +106,6 @@ public class CardService {
         }
     }
     private Card findCard(Long id) {
-        return cardRepository.findById(id).orElseThrow(() -> new IllegalArgumentException("선택한 카드가 없습니다"));
+        return cardRepository.findById(id).orElseThrow(() -> new NotFoundException("선택한 카드가 없습니다"));
     }
 }
