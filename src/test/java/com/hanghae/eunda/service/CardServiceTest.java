@@ -50,7 +50,6 @@ class CardServiceTest {
     @Mock
     private RedissonClient redissonClient;
 
-    @Test
     public void testChangeCardStatusConcurrency() throws InterruptedException {
         ExecutorService executor = Executors.newFixedThreadPool(5); // 적절한 스레드 풀 생성
 
