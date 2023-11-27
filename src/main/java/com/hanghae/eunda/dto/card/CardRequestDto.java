@@ -8,8 +8,7 @@ import lombok.Setter;
 @Setter
 public class CardRequestDto {
     private String title;
-    private StatusEnumType status;
+    private StatusEnumType status = StatusEnumType.TODO;
     private String contents;
     private Long studyId;
-
 }
