@@ -8,6 +8,8 @@ import com.hanghae.eunda.entity.Card;
 import com.hanghae.eunda.entity.Member;
 import com.hanghae.eunda.entity.Study;
 import com.hanghae.eunda.entity.StudyMember;
+import com.hanghae.eunda.exception.ForbiddenException;
+import com.hanghae.eunda.exception.NotFoundException;
 import com.hanghae.eunda.redis.RedisTokenService;
 import com.hanghae.eunda.repository.CardRepository;
 import com.hanghae.eunda.repository.StudyMemberRepository;
@@ -41,7 +43,7 @@ public class StudyService {
         Member member = (Member) req.getAttribute("member");
 
         if (member == null) {
-            throw new IllegalArgumentException("로그인한 회원만 접근할 수 있습니다..");
+            throw new ForbiddenException("로그인한 회원만 접근할 수 있습니다..");
         }
 
         Study study = new Study(requestDto, member);
@@ -128,13 +130,13 @@ public class StudyService {
         Study study = findStudy(id);
 
         if (!redisTokenService.isTokenValid(token)) {
-            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+            throw new ForbiddenException("유효하지 않은 토큰입니다.");
         }
 
         Member member = (Member) req.getAttribute("member");
 
         if (member == null) {
-            throw new IllegalArgumentException("로그인한 회원만 접근할 수 있습니다..");
+            throw new ForbiddenException("로그인한 회원만 접근할 수 있습니다..");
         }
 
         StudyMember studyMember = new StudyMember(member, study);
@@ -157,7 +159,7 @@ public class StudyService {
     // DB에서 스터디 조회
     private Study findStudy(Long id) {
         return studyRepository.findById(id).orElseThrow(() ->
-            new IllegalArgumentException("존재하지 않는 스터디입니다.")
+            new NotFoundException("존재하지 않는 스터디입니다.")
         );
     }
 
@@ -166,7 +168,7 @@ public class StudyService {
         Member member = (Member) req.getAttribute("member");
 
         if (!member.getEmail().equals(study.getLeader())) {
-            throw new IllegalArgumentException("스터디 장만 가능합니다.");
+            throw new ForbiddenException("스터디 장만 가능합니다.");
         }
     }
 }
