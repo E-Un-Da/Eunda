@@ -25,7 +25,7 @@ spring:
     redis:
       mail:
         host: localhost # 임시 방편으로 로컬에서 테스트를 위해 설정
-        port: 6380
+        port: 6379
 
   jpa:
     database-platform: org.hibernate.dialect.MySQLDialect

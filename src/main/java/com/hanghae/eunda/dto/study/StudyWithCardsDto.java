@@ -16,6 +16,7 @@ public class StudyWithCardsDto {
         this.study = study;
         this.cardDetails = cards.stream()
             .map(card -> new CardDetailsDto(
+                card.getId(),
                 card.getTitle(),
                 card.getStatus(),
                 card.getMember().getNickname()

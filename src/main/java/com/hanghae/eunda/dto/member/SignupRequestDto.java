@@ -1,11 +1,15 @@
 package com.hanghae.eunda.dto.member;
 
 import jakarta.validation.constraints.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 public class SignupRequestDto {
     @NotEmpty(message = "이메일 입력은 필수 입니다.")
     @Email(message = "올바른 이메일 형식이 아닙니다.")
