@@ -100,6 +100,8 @@ public class MemberService {
         String token = tokenGenerator.createToken(email);
         tokenGenerator.addJwtToCookie(token, res);
 
+        res.setHeader("Access-Control-Allow-Credentials", "true");
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
                 .body("로그인에 성공하였습니다.");

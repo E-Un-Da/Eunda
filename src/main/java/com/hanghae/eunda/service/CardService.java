@@ -83,12 +83,15 @@ public class CardService {
             if(available) {
                 Card card = findCard(id);
                 StudyMember studyMember = studyMemberRepository.findByMemberIdAndStudyId(member.getId(), card.getStudy().getId())
+
                     .orElseThrow(() -> new ForbiddenException("스터디 멤버만 수정할 수 있습니다."));
+
                 log.info("현재 작업자: [{}]", worker);
                 log.info("현재 상태: [{}]", card.getStatus());
                 StatusEnumType currentState = card.getStatus();
                 StatusEnumType newState = StatusEnumType.valueOf(cardStatusRequestDto.getStatus());
                 if(currentState.equals(newState)) {
+
                     throw new ForbiddenException("스터디 멤버만 수정할 수 있습니다.");
                 }
 

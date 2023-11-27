@@ -20,11 +20,11 @@ public class Card {
     @Column(nullable = false)
     private String title;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     @Enumerated(value = EnumType.STRING)
     private StatusEnumType status;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String contents;
 
 
@@ -52,8 +52,4 @@ public class Card {
     public void changeCardStatus(StatusEnumType status) {
         this.status = status;
     }
-
-//    public void changeStatus(CardRequestDto requestDto) {
-//    }
-
 }

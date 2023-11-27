@@ -32,9 +32,11 @@ public class AuthFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String url = httpServletRequest.getRequestURI();
         String method = httpServletRequest.getMethod();
-        System.out.println(method);
+        System.out.println(method + url);
+
 
         if (StringUtils.hasText(url) && (method.equals("OPTIONS") || url.startsWith("/signup") || url.startsWith("/signin") || ("GET".equals(method) && url.equals("/studies")) || url.matches("/studies/\\+d"))) {
+
             // 회원가입, 로그인, 스터디 조회 관련 API 는 인증 필요없이 요청 진행
             chain.doFilter(request, response); // 다음 Filter 로 이동
         } else {
