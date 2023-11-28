@@ -23,7 +23,7 @@ import java.util.List;
 @RequiredArgsConstructor
     public class StudyController {
 
-    @Value("{$feUrl}")
+    @Value("${feUrl}")
     public String url;
 
     private final StudyService studyService;

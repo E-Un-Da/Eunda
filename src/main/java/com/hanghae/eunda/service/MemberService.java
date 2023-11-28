@@ -46,8 +46,6 @@ public class MemberService {
     private final static String MAIL_TITLE_CERTIFICATION = "[E-UN-DA] 메일 인증을 해주세요.";
     private final static String DOMAIN_NAME = "http://localhost:8080";
 
-    @Value("{$feUrl}")
-    public String url;
 
     public ResponseEntity signup(SignupRequestDto requestDto) {
         String email = requestDto.getEmail();
@@ -77,8 +75,6 @@ public class MemberService {
     public ResponseEntity<String> signin(SigninRequestDto requestDto, HttpServletResponse res) {
         String email = requestDto.getEmail();
         String password = requestDto.getPassword();
-
-        System.out.println(url);
 
         // DB 이메일 확인
         Member member = memberRepository.findByEmail(email)

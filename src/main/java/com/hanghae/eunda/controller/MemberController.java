@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemberController {
 
-    @Value("{$feUrl}")
+    @Value("${feUrl}")
     public String url;
 
     private final MemberService memberService;

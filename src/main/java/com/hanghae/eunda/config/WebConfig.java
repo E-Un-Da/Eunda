@@ -9,7 +9,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    @Value("{$feUrl}")
+    @Value("${feUrl}")
     public String url;
     @Override
     public void addCorsMappings(CorsRegistry registry) {
