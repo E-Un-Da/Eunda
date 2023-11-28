@@ -31,4 +31,11 @@ public class RedisTokenService {
     public void deleteToken(String token) {
         stringRedisTemplate.delete(token);
     }
+
+    public String saveJoinRequestToken(String joinToken) {
+        stringRedisTemplate.opsForValue().set(joinToken, "applyStudy");
+        stringRedisTemplate.expire(joinToken, 30, TimeUnit.MINUTES);
+
+        return joinToken;
+    }
 }

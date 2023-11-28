@@ -169,4 +169,56 @@ public class StudyService {
             throw new IllegalArgumentException("스터디 장만 가능합니다.");
         }
     }
+    public String applyStudy(Long id, String token, HttpServletRequest req) {
+        Study study = findStudy(id);
+
+        // Redis에 저장된 토큰이 유효한지 확인
+        if (!redisTokenService.isTokenValid(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+
+        // 로그인한 회원만 접근 가능
+        Member member = (Member) req.getAttribute("member");
+        if (member == null) {
+            throw new IllegalArgumentException("로그인한 회원만 접근할 수 있습니다.");
+        }
+
+        if (studyMemberRepository.existsByMemberAndStudy(member, study)) {
+            throw new IllegalArgumentException("이미 스터디 멤버입니다.");
+        }
+
+        // 스터디 멤버로 추가
+        StudyMember studyMember = new StudyMember(member, study);
+        studyMemberRepository.save(studyMember);
+        study.addMember();
+
+        // Redis에서 토큰 삭제
+        redisTokenService.deleteToken(token);
+
+        return "스터디에 성공적으로 참여했습니다.";
+    }
+
+    public String requestToJoinStudy(Long id, HttpServletRequest req) throws MessagingException {
+        Study study = findStudy(id);
+
+        // 로그인한 회원만 접근 가능
+        Member member = (Member) req.getAttribute("member");
+        if (member == null) {
+            throw new IllegalArgumentException("로그인한 회원만 접근할 수 있습니다.");
+        }
+
+        // 이미 멤버인 경우
+        if (studyMemberRepository.existsByMemberAndStudy(member, study)) {
+            throw new IllegalArgumentException("이미 스터디 멤버입니다.");
+        }
+
+        // 리더에게 이메일 발송
+        String joinToken = mailSendService.sendJoinRequestEmail(study, member);
+
+        // Redis에 토큰 저장 (유효 기간 30분)
+        redisTokenService.saveJoinRequestToken(joinToken);
+
+        return "참가 신청이 완료되었습니다. 스터디 리더의 수락을 기다려주세요.";
+    }
+
 }

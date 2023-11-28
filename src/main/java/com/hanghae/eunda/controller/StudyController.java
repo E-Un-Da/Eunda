@@ -1,15 +1,11 @@
 package com.hanghae.eunda.controller;
 
-import com.hanghae.eunda.dto.study.StudyInviteRequestDto;
-import com.hanghae.eunda.dto.study.StudyQueryDto;
-import com.hanghae.eunda.dto.study.StudyRequestDto;
-import com.hanghae.eunda.dto.study.StudyResponseDto;
-import com.hanghae.eunda.dto.study.StudyWithCardsDto;
-import com.hanghae.eunda.mail.ApiResponse;
+import com.hanghae.eunda.dto.study.*;
 import com.hanghae.eunda.service.StudyService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.nio.charset.StandardCharsets;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
@@ -18,7 +14,6 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.Mapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -105,5 +100,24 @@ import org.springframework.web.bind.annotation.RestController;
             .header(
                 HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
             .body(successMessage);
+    }
+
+    @GetMapping("{id}/applyStudy")
+    public ResponseEntity<String> applyStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req) {
+        String successMessage = studyService.applyStudy(id, token, req);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(successMessage);
+
+    }
+
+    @PostMapping("{id}/joinRequest")
+    public ResponseEntity<String> requestToJoinStudy(@PathVariable Long id, HttpServletRequest req) throws MessagingException {
+        String successMessage = studyService.requestToJoinStudy(id, req);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+                .body(successMessage);
     }
 }
