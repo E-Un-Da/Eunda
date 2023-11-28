@@ -54,6 +54,6 @@ public class MemberController {
         System.out.println("emailCertificationDto.getEmail() = " + email);
         System.out.println("emailCertificationDto = " + certificationNumber);
         memberService.verifyMemberEmail(email, certificationNumber);
-        return new RedirectView("http://localhost:3000/");
+        return new RedirectView("http://13.209.62.109:3000");
     }
 }
