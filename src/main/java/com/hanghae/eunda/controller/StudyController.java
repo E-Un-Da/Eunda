@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
@@ -85,14 +86,17 @@ import java.util.List;
     }
 
     @GetMapping("{id}/join")
-    public ResponseEntity<String> joinStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req)
+    public RedirectView joinStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req)
     {
         String successMessage = studyService.joinStudy(id, token, req);
+        return new RedirectView("http://localhost:3000/");
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .header(
-                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-            .body(successMessage);
+
+//        return ResponseEntity.status(HttpStatus.CREATED)
+//            .header(
+//                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+//            .body(successMessage);
+
     }
 
     @GetMapping("my-studies")
