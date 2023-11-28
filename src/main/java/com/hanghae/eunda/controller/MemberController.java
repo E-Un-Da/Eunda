@@ -1,6 +1,7 @@
 package com.hanghae.eunda.controller;
 
-import com.hanghae.eunda.dto.SigninRequestDto;
+import com.hanghae.eunda.dto.member.EmailCertificationDto;
+import com.hanghae.eunda.dto.member.SigninRequestDto;
 import com.hanghae.eunda.dto.member.SignupRequestDto;
 import com.hanghae.eunda.service.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
@@ -10,9 +11,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 
@@ -47,4 +47,13 @@ public class MemberController {
         return memberService.signin(requestDto, res);
     }
 
+    @GetMapping("/signup")
+    public RedirectView verifyMemberEmail(
+            @RequestParam("email") String email,
+            @RequestParam("certificationNumber") String certificationNumber) {
+        System.out.println("emailCertificationDto.getEmail() = " + email);
+        System.out.println("emailCertificationDto = " + certificationNumber);
+        memberService.verifyMemberEmail(email, certificationNumber);
+        return new RedirectView("http://localhost:3000/");
+    }
 }

@@ -1,31 +1,35 @@
 package com.hanghae.eunda.dto.study;
 
 import com.hanghae.eunda.entity.Study;
-import java.time.LocalDateTime;
+import com.hanghae.eunda.entity.StudyMember;
 import lombok.Getter;
 
+import java.time.LocalDateTime;
+
 @Getter
-public class StudyResponseDto {
+public class StudyMemberResponseDto {
     private Long id;
     private String title;
     private String category;
-    private String leader;
     private String intro;
+    private String rule;
     private int headcount;
     private int recruitNum;
     private boolean recruit;
+    private String leader;
     private LocalDateTime createdAt;
 
-    public StudyResponseDto(Study study) {
+    public StudyMemberResponseDto(StudyMember studyMember) {
+        Study study = studyMember.getStudy();
+        this.id = study.getId();
         this.title = study.getTitle();
         this.category = study.getCategory();
-        this.leader = study.getLeader();
         this.intro = study.getIntro();
+        this.rule = study.getRule();
+        this.headcount = study.getHeadcount();
         this.recruitNum = study.getRecruitNum();
         this.recruit = study.isRecruit();
-        this.headcount = study.getHeadcount();
+        this.leader = study.getLeader();
         this.createdAt = study.getCreatedAt();
-        this.id = study.getId();
     }
-
 }

@@ -11,9 +11,8 @@ import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import jakarta.validation.constraints.Email;
 import java.time.LocalDateTime;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -22,7 +21,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Setter
 @EntityListeners(AuditingEntityListener.class)
 @NoArgsConstructor
-
 public class Study {
 
     @Id
@@ -79,5 +77,9 @@ public class Study {
         this.rule = requestDto.getRule();
         this.recruitNum = requestDto.getRecruitNum();
         this.recruit = requestDto.isRecruit();
+    }
+
+    public void addMember() {
+        this.headcount++;
     }
 }

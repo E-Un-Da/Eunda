@@ -23,13 +23,13 @@ public class Member {
     private Long id;
 
     @Email
-    @Column(nullable = false, unique = true)
+    @Column(nullable = true, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String nickname;
 
-    @Column(nullable = false)
+    @Column(nullable = true)
     private String password;
 
     @Column(name = "email_authentication")

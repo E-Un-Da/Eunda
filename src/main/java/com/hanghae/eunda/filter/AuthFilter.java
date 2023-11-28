@@ -7,6 +7,7 @@ import com.hanghae.eunda.repository.MemberRepository;
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.annotation.Order;
@@ -31,9 +32,11 @@ public class AuthFilter implements Filter {
         HttpServletRequest httpServletRequest = (HttpServletRequest) request;
         String url = httpServletRequest.getRequestURI();
         String method = httpServletRequest.getMethod();
-        System.out.println(method);
+        System.out.println(method + url);
 
-        if (StringUtils.hasText(url) && (url.startsWith("/signup") || url.startsWith("/signin") || ("GET".equals(method) && url.startsWith("/studies")))) {
+
+        if (StringUtils.hasText(url) && (method.equals("OPTIONS") || url.startsWith("/signup") || url.startsWith("/signin") || ("GET".equals(method) && url.equals("/studies")) || url.matches("/studies/\\+d"))) {
+
             // 회원가입, 로그인, 스터디 조회 관련 API 는 인증 필요없이 요청 진행
             chain.doFilter(request, response); // 다음 Filter 로 이동
         } else {

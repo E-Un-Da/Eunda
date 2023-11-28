@@ -1,28 +1,21 @@
 package com.hanghae.eunda.controller;
 
-import com.hanghae.eunda.dto.study.StudyQueryDto;
-import com.hanghae.eunda.dto.study.StudyRequestDto;
-import com.hanghae.eunda.dto.study.StudyResponseDto;
-import com.hanghae.eunda.dto.study.StudyWithCardsDto;
-import com.hanghae.eunda.entity.Study;
+import com.hanghae.eunda.dto.study.*;
 import com.hanghae.eunda.service.StudyService;
+import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-import java.nio.charset.StandardCharsets;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
+
+import java.nio.charset.StandardCharsets;
+import java.util.List;
+
 
 @RestController
 @RequestMapping("/studies")
@@ -32,13 +25,9 @@ import org.springframework.web.bind.annotation.RestController;
     private final StudyService studyService;
 
     @PostMapping("")
-    public ResponseEntity<String> createStudy(@RequestBody StudyRequestDto requestDto, HttpServletRequest req) {
-        String successMessage = studyService.createStudy(requestDto, req);
+    public StudyResponseDto createStudy(@RequestBody StudyRequestDto requestDto, HttpServletRequest req) {
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .header(
-                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-            .body(successMessage);
+        return studyService.createStudy(requestDto, req);
     }
 
 
@@ -81,11 +70,42 @@ import org.springframework.web.bind.annotation.RestController;
             .body(successMessage);
     }
 
-    @PostMapping("/invites")
-    public String inviteMember() {
-        return null;
+    @PostMapping("{id}/invites")
+    public ResponseEntity<String> inviteMember(@PathVariable Long id, HttpServletRequest req, @RequestBody StudyInviteRequestDto requestDto)
+        throws MessagingException {
+        String successMessage = studyService.inviteMember(id, req, requestDto);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(
+                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
     }
 
+    @GetMapping("{id}/join")
+    public RedirectView joinStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req)
+    {
+        String successMessage = studyService.joinStudy(id, token, req);
+        return new RedirectView("http://localhost:3000/studies/{id}");
+    }
 
+    @GetMapping("my-studies")
+    public List<StudyMemberResponseDto> myStudies(HttpServletRequest req) {
+        return studyService.myStudies(req);
+    }
 
+    @GetMapping("{id}/apply-study")
+    public RedirectView applyStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req) {
+        studyService.applyStudy(id, token, req);
+
+        return new RedirectView("http://localhost:3000/studies/{id}");
+    }
+
+    @PostMapping("{id}/join-request")
+    public ResponseEntity<String> requestToJoinStudy(@PathVariable Long id, HttpServletRequest req) throws MessagingException {
+        String successMessage = studyService.requestToJoinStudy(id, req);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
+    }
 }
