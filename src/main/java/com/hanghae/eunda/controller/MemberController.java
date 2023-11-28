@@ -7,6 +7,7 @@ import com.hanghae.eunda.service.MemberService;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -19,6 +20,9 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 public class MemberController {
+
+    @Value("{$feUrl}")
+    public String url;
 
     private final MemberService memberService;
 
@@ -54,6 +58,6 @@ public class MemberController {
         System.out.println("emailCertificationDto.getEmail() = " + email);
         System.out.println("emailCertificationDto = " + certificationNumber);
         memberService.verifyMemberEmail(email, certificationNumber);
-        return new RedirectView("http://13.209.64.109:3000");
+        return new RedirectView(url);
     }
 }

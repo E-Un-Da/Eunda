@@ -9,6 +9,8 @@ spring:
       enabled: true
 
 
+
+
   mail:
     host: smtp.gmail.com
     port: 587
@@ -45,6 +47,8 @@ spring:
 
 server:
   port: 8080
+
+feUrl: http://13.209.64.109:3000
 
 jwt:
   secretKey: ${JWT_SECRET_KEY}

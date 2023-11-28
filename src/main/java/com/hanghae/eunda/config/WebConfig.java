@@ -1,6 +1,7 @@
 package com.hanghae.eunda.config;
 
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -8,11 +9,13 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
+    @Value("{$feUrl}")
+    public String url;
     @Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
 
-            .allowedOrigins("http://13.209.64.109:3000")
+            .allowedOrigins(url)
             .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS")
             .allowedHeaders("Authorization", "Content-Type", "X-Requested-With")
             .allowCredentials(true);

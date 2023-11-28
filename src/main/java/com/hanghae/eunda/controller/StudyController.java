@@ -5,6 +5,7 @@ import com.hanghae.eunda.service.StudyService;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -21,6 +22,9 @@ import java.util.List;
 @RequestMapping("/studies")
 @RequiredArgsConstructor
     public class StudyController {
+
+    @Value("{$feUrl}")
+    public String url;
 
     private final StudyService studyService;
 
@@ -85,7 +89,7 @@ import java.util.List;
     public RedirectView joinStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req)
     {
         String successMessage = studyService.joinStudy(id, token, req);
-        return new RedirectView("http://13.209.64.109:3000/studies/{id}");
+        return new RedirectView(url + "/studies/{id}");
     }
 
     @GetMapping("my-studies")
@@ -97,7 +101,7 @@ import java.util.List;
     public RedirectView applyStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req) {
         studyService.applyStudy(id, token, req);
 
-        return new RedirectView("http://13.209.64.109:3000/studies/{id}");
+        return new RedirectView(url + "/studies/{id}");
     }
 
     @PostMapping("{id}/join-request")
