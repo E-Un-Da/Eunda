@@ -167,7 +167,7 @@ public class StudyService {
     }
 
     @Transactional
-    public String applyStudy(Long id, String token, HttpServletRequest req) {
+    public void applyStudy(Long id, String token, HttpServletRequest req) {
         Study study = findStudy(id);
 
         checkLeader(req, study);
@@ -194,8 +194,6 @@ public class StudyService {
 
         // Redis에서 토큰 삭제
         redisTokenService.deleteToken(token);
-
-        return "스터디에 성공적으로 참여했습니다.";
     }
 
     public String requestToJoinStudy(Long id, HttpServletRequest req) throws MessagingException {
