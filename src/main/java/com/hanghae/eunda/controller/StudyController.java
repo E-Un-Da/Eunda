@@ -25,13 +25,9 @@ import java.util.List;
     private final StudyService studyService;
 
     @PostMapping("")
-    public ResponseEntity<String> createStudy(@RequestBody StudyRequestDto requestDto, HttpServletRequest req) {
-        String successMessage = studyService.createStudy(requestDto, req);
+    public StudyResponseDto createStudy(@RequestBody StudyRequestDto requestDto, HttpServletRequest req) {
 
-        return ResponseEntity.status(HttpStatus.CREATED)
-            .header(
-                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-            .body(successMessage);
+        return studyService.createStudy(requestDto, req);
     }
 
 

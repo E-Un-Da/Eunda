@@ -38,7 +38,7 @@ public class StudyService {
 
     // 스터디 생성
     @Transactional
-    public String createStudy(StudyRequestDto requestDto, HttpServletRequest req) {
+    public StudyResponseDto createStudy(StudyRequestDto requestDto, HttpServletRequest req) {
         Member member = (Member) req.getAttribute("member");
 
         if (member == null) {
@@ -52,7 +52,7 @@ public class StudyService {
         studyRepository.save(study);
         studyMemberRepository.save(studyMember);
 
-        return "새로운 스터디를 생성하였습니다.";
+        return new StudyResponseDto(study);
     }
 
 
