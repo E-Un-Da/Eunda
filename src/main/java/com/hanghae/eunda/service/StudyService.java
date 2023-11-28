@@ -13,6 +13,8 @@ import com.hanghae.eunda.repository.StudyMemberRepository;
 import com.hanghae.eunda.repository.StudyRepository;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.net.URI;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
@@ -20,8 +22,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Service
 @RequiredArgsConstructor
@@ -112,7 +118,7 @@ public class StudyService {
         checkLeader(req, study);
 
         String joinToken = redisTokenService.generateAndSaveToken(); // UUID 토큰 생성
-        String joinLink = "http://localhost:8080/studies/" + id + "/join?token=" + joinToken; // 초대링크 생성
+        String joinLink = String.format("http://localhost:8080/studies/%s/join?token=%s", id, joinToken); // 초대링크 생성
         String content = getEmailContent(study.getTitle(), joinLink); // 초대메일 내용 생성
         String recipientEmail = requestDto.getEmail();
 
