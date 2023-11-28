@@ -9,6 +9,7 @@ import com.hanghae.eunda.exception.ForbiddenException;
 import com.hanghae.eunda.exception.NotFoundException;
 import com.hanghae.eunda.redis.RedisTokenService;
 import com.hanghae.eunda.repository.CardRepository;
+import com.hanghae.eunda.repository.MemberRepository;
 import com.hanghae.eunda.repository.StudyMemberRepository;
 import com.hanghae.eunda.repository.StudyRepository;
 import jakarta.mail.MessagingException;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class StudyService {
 
 
+    private final MemberRepository memberRepository;
     private final StudyRepository studyRepository;
     private final StudyMemberRepository studyMemberRepository;
     private final CardRepository cardRepository;
@@ -113,7 +115,7 @@ public class StudyService {
 
         String joinToken = redisTokenService.generateAndSaveToken(); // UUID 토큰 생성
         String joinLink = "http://localhost:8080/studies/" + id + "/join?token=" + joinToken; // 초대링크 생성
-        String content = getEmailContent(study.getTitle(), joinLink); // 초대메일 내용 생성
+        String content = getInviteEmailContent(study.getTitle(), joinLink); // 초대메일 내용 생성
         String recipientEmail = requestDto.getEmail();
 
         mailSendService.sendMailInvite(recipientEmail, content);
@@ -159,12 +161,81 @@ public class StudyService {
         return studyMemberList.stream().map(StudyMemberResponseDto::new).toList();
     }
 
+    @Transactional
+    public String applyStudy(Long id, String token, HttpServletRequest req) {
+        Study study = findStudy(id);
+
+        checkLeader(req, study);
+
+        // Redis에 저장된 토큰이 유효한지 확인
+        if (!redisTokenService.isRequestTokenValid(token)) {
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+        }
+
+        String applicantEmail = redisTokenService.getDecodedToken(token);
+
+        Member applicant = memberRepository.findByEmail(applicantEmail).orElseThrow(() ->
+            new IllegalArgumentException("존재하지 않는 사용자입니다.")
+        );
+
+        if (studyMemberRepository.existsByMemberAndStudy(applicant, study)) {
+            throw new IllegalArgumentException("이미 스터디 멤버입니다.");
+        }
+
+        // 스터디 멤버로 추가
+        StudyMember studyMember = new StudyMember(applicant, study);
+        studyMemberRepository.save(studyMember);
+        study.addMember();
+
+        // Redis에서 토큰 삭제
+        redisTokenService.deleteToken(token);
+
+        return "스터디에 성공적으로 참여했습니다.";
+    }
+
+    public String requestToJoinStudy(Long id, HttpServletRequest req) throws MessagingException {
+        Study study = findStudy(id);
+
+        // 로그인한 회원만 접근 가능
+        Member member = (Member) req.getAttribute("member");
+        if (member == null) {
+            throw new IllegalArgumentException("로그인한 회원만 접근할 수 있습니다.");
+        }
+
+        // 이미 멤버인 경우
+        if (studyMemberRepository.existsByMemberAndStudy(member, study)) {
+            throw new IllegalArgumentException("이미 스터디 멤버입니다.");
+        }
+
+        // 스터디의 모집상태가 false인 경우
+        if (!study.isRecruit()) {
+            throw new IllegalArgumentException("스터디원을 모집하지 않는 스터디입니다.");
+        }
+
+        String requestToken = redisTokenService.generateAndSaveRequestToken(member.getEmail()); // // BASE64 인코딩
+        String applyLink = "http://localhost:8080/studies/" + id + "/apply-study?token=" + requestToken; // 초대링크 생성
+        String content = getRequestEmailContent(study.getTitle(), member.getEmail(), applyLink); // 초대메일 내용 생성
+        String leaderEmail = study.getLeader();
+
+        mailSendService.sendMailRequest(leaderEmail, content);
+
+        return "스터디에 가입 신청하였습니다.";
+    }
+
 
     // 초대메일 내용 작성
-    private String getEmailContent(String title, String joinLink) {
+    private String getInviteEmailContent(String title, String joinLink) {
         String content = String.format("안녕하세요! '%s' 스터디에 초대합니다.\n", title);
         content += "가입하려면 아래 링크를 클릭해주세요:\n";
         content += joinLink;
+        return content;
+    }
+
+    // 초대메일 내용 작성
+    private String getRequestEmailContent(String title, String email, String applyLink) {
+        String content = String.format("안녕하세요! '%s' 님이 '%s' 스터디에 신청합니다.\n", email, title);
+        content += "가입을 수락하려면 아래 링크를 클릭해주세요:\n";
+        content += applyLink;
         return content;
     }
 

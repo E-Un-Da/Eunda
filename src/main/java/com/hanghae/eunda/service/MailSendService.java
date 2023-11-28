@@ -48,4 +48,13 @@ public class MailSendService {
 
         mailSender.send(message);
     }
+
+    public void sendMailRequest(String leaderEmail, String content) throws MessagingException {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(leaderEmail);
+        message.setSubject("스터디에 가입 신청합니다!");
+        message.setText(content);
+
+        mailSender.send(message);
+    }
 }
