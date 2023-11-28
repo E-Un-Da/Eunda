@@ -5,7 +5,6 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
-import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -29,6 +28,7 @@ public class RedisTokenService {
     public String isTokenValid(String token) {
         byte[] decodedBytes = Base64.getDecoder().decode(token.getBytes(StandardCharsets.UTF_8));
         return new String(decodedBytes, StandardCharsets.UTF_8);
+    }
 
     public String generateAndSaveRequestToken(String email) {
         String token = Base64.getEncoder().encodeToString(email.getBytes());
