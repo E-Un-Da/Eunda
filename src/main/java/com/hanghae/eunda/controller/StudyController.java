@@ -85,7 +85,7 @@ import java.util.List;
     public RedirectView joinStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req)
     {
         String successMessage = studyService.joinStudy(id, token, req);
-        return new RedirectView("http://13.209.62.109:3000/studies/{id}");
+        return new RedirectView("http://13.209.64.109:3000/studies/{id}");
     }
 
     @GetMapping("my-studies")
@@ -97,7 +97,7 @@ import java.util.List;
     public RedirectView applyStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req) {
         studyService.applyStudy(id, token, req);
 
-        return new RedirectView("http://13.209.62.109:3000/studies/{id}");
+        return new RedirectView("http://13.209.64.109:3000/studies/{id}");
     }
 
     @PostMapping("{id}/join-request")
