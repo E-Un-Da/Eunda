@@ -35,7 +35,6 @@ public class StudyService {
     private final CardRepository cardRepository;
     private final MailSendService mailSendService;
     private final RedisTokenService redisTokenService;
-    private final MemberRepository memberRepository;
 
     // 스터디 생성
     @Transactional
@@ -118,7 +117,7 @@ public class StudyService {
 
         String joinToken = redisTokenService.generateAndSaveToken(recipientEmail); // Base64 인코딩
         String joinLink = String.format("http://localhost:8080/studies/%s/join?token=%s", id, joinToken); // 초대링크 생성
-        String content = getEmailContent(study.getTitle(), joinLink); // 초대메일 내용 생성
+        String content = getInviteEmailContent(study.getTitle(), joinLink); // 초대메일 내용 생성
 
 
         mailSendService.sendMailInvite(recipientEmail, content);
