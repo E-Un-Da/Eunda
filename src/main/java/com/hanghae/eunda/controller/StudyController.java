@@ -90,13 +90,6 @@ import java.util.List;
     {
         String successMessage = studyService.joinStudy(id, token, req);
         return new RedirectView("http://localhost:3000/");
-
-
-//        return ResponseEntity.status(HttpStatus.CREATED)
-//            .header(
-//                HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
-//            .body(successMessage);
-
     }
 
     @GetMapping("my-studies")

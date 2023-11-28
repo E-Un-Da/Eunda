@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.view.RedirectView;
 
 import java.util.List;
 
@@ -47,13 +48,12 @@ public class MemberController {
     }
 
     @GetMapping("/signup")
-    public String verifyMemberEmail(
+    public RedirectView verifyMemberEmail(
             @RequestParam("email") String email,
             @RequestParam("certificationNumber") String certificationNumber) {
         System.out.println("emailCertificationDto.getEmail() = " + email);
         System.out.println("emailCertificationDto = " + certificationNumber);
         memberService.verifyMemberEmail(email, certificationNumber);
-        return "완료";
-//        return "redirect:/"
+        return new RedirectView("http://localhost:3000/");
     }
 }
