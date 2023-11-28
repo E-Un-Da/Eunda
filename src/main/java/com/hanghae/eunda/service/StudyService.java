@@ -9,25 +9,20 @@ import com.hanghae.eunda.exception.ForbiddenException;
 import com.hanghae.eunda.exception.NotFoundException;
 import com.hanghae.eunda.redis.RedisTokenService;
 import com.hanghae.eunda.repository.CardRepository;
+import com.hanghae.eunda.repository.MemberRepository;
 import com.hanghae.eunda.repository.StudyMemberRepository;
 import com.hanghae.eunda.repository.StudyRepository;
 import jakarta.mail.MessagingException;
 import jakarta.servlet.http.HttpServletRequest;
-
-import java.net.URI;
-import java.util.List;
-
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.util.UriComponentsBuilder;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -39,6 +34,7 @@ public class StudyService {
     private final CardRepository cardRepository;
     private final MailSendService mailSendService;
     private final RedisTokenService redisTokenService;
+    private final MemberRepository memberRepository;
 
     // 스터디 생성
     @Transactional
@@ -117,10 +113,12 @@ public class StudyService {
         Study study = findStudy(id);
         checkLeader(req, study);
 
-        String joinToken = redisTokenService.generateAndSaveToken(); // UUID 토큰 생성
+        String recipientEmail = requestDto.getEmail();
+
+        String joinToken = redisTokenService.generateAndSaveToken(recipientEmail); // Base64 인코딩
         String joinLink = String.format("http://localhost:8080/studies/%s/join?token=%s", id, joinToken); // 초대링크 생성
         String content = getEmailContent(study.getTitle(), joinLink); // 초대메일 내용 생성
-        String recipientEmail = requestDto.getEmail();
+
 
         mailSendService.sendMailInvite(recipientEmail, content);
 
@@ -132,15 +130,18 @@ public class StudyService {
     public String joinStudy(Long id, String token, HttpServletRequest req) {
         Study study = findStudy(id);
 
-        if (!redisTokenService.isTokenValid(token)) {
+        // 토큰 유효 확인
+        if(token == null || token.equals("")) {
             throw new ForbiddenException("유효하지 않은 토큰입니다.");
         }
 
-        Member member = (Member) req.getAttribute("member");
+        // 토큰 값 확인
+        String email = redisTokenService.isTokenValid(token);
 
-        if (member == null) {
-            throw new ForbiddenException("로그인한 회원만 접근할 수 있습니다..");
-        }
+        // 이메일 받은 멤버 가입 확인
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("사용자를 찾을 수 없습니다."));
+
 
         StudyMember studyMember = new StudyMember(member, study);
         studyMemberRepository.save(studyMember);
