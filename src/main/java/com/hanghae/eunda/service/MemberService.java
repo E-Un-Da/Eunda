@@ -44,7 +44,7 @@ public class MemberService {
     private final CertificationGenerator generator;
 
     private final static String MAIL_TITLE_CERTIFICATION = "[E-UN-DA] 메일 인증을 해주세요.";
-    private final static String DOMAIN_NAME = "http://localhost:8080";
+    private final static String DOMAIN_NAME = "http://13.209.64.109:8080";
 
 
     public ResponseEntity signup(SignupRequestDto requestDto) {
