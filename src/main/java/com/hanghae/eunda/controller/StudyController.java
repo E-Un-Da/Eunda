@@ -96,4 +96,23 @@ import java.util.List;
     public List<StudyMemberResponseDto> myStudies(HttpServletRequest req) {
         return studyService.myStudies(req);
     }
+
+    @GetMapping("{id}/apply-study")
+    public ResponseEntity<String> applyStudy(@PathVariable Long id, @RequestParam("token") String token, HttpServletRequest req) {
+        String successMessage = studyService.applyStudy(id, token, req);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
+
+    }
+
+    @PostMapping("{id}/join-request")
+    public ResponseEntity<String> requestToJoinStudy(@PathVariable Long id, HttpServletRequest req) throws MessagingException {
+        String successMessage = studyService.requestToJoinStudy(id, req);
+
+        return ResponseEntity.status(HttpStatus.CREATED)
+            .header(HttpHeaders.CONTENT_TYPE, MediaType.TEXT_PLAIN_VALUE + ";charset=" + StandardCharsets.UTF_8)
+            .body(successMessage);
+    }
 }
