@@ -46,14 +46,14 @@ spring:
     open-in-view: false
 
 server:
-  port: 443
+  port: 8080
 
   ssl:
     key-store: classpath:keystore.p12
     key-store-type: PKCS12
     key-store-password: 1234
 
-feUrl: http://eunda.shop:3000
+feUrl: https://eunda.shop
 
 jwt:
   secretKey: ${JWT_SECRET_KEY}
