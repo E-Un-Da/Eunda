@@ -116,7 +116,7 @@ public class StudyService {
         String recipientEmail = requestDto.getEmail();
 
         String joinToken = redisTokenService.generateAndSaveToken(recipientEmail); // Base64 인코딩
-        String joinLink = String.format("http://13.209.64.109:8080/studies/%s/join?token=%s", id, joinToken); // 초대링크 생성
+        String joinLink = String.format("http://13.209.64.109:8080/api/studies/%s/join?token=%s", id, joinToken); // 초대링크 생성
         String content = getInviteEmailContent(study.getTitle(), joinLink); // 초대메일 내용 생성
 
 
@@ -216,7 +216,7 @@ public class StudyService {
         }
 
         String requestToken = redisTokenService.generateAndSaveRequestToken(member.getEmail()); // // BASE64 인코딩
-        String applyLink = "http://13.209.64.109:8080/studies/" + id + "/apply-study?token=" + requestToken; // 초대링크 생성
+        String applyLink = "http://13.209.64.109:8080/api/studies/" + id + "/apply-study?token=" + requestToken; // 초대링크 생성
         String content = getRequestEmailContent(study.getTitle(), member.getEmail(), applyLink); // 초대메일 내용 생성
         String leaderEmail = study.getLeader();
 

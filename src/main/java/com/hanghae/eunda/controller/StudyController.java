@@ -19,7 +19,7 @@ import java.util.List;
 
 
 @RestController
-@RequestMapping("/studies")
+@RequestMapping("/api/studies")
 @RequiredArgsConstructor
     public class StudyController {
 
