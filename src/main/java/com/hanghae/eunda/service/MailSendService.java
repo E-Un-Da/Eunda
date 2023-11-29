@@ -20,7 +20,7 @@ public class MailSendService {
     private final CertificationNumberDao certificationNumberDao;
     private final CertificationGenerator generator;
     private static final String MAIL_TITLE_CERTIFICATION = "회원가입 인증메일";
-    private static final String DOMAIN_NAME = "http://13.209.64.109:8080/api";
+    private static final String DOMAIN_NAME = "http://eunda.shop:8080/api";
 
     public EmailCertificationResponse sendEmailForCertification(String email) throws NoSuchAlgorithmException, MessagingException {
 
